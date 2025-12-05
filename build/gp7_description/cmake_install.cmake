@@ -48,6 +48,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     "/home/pankaja/gp7_ws/src/gp7_description/launch"
     "/home/pankaja/gp7_ws/src/gp7_description/meshes"
     "/home/pankaja/gp7_ws/src/gp7_description/urdf"
+    "/home/pankaja/gp7_ws/src/gp7_description/worlds"
     )
 endif()
 

@@ -15,6 +15,7 @@
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/meshes/base_link.STL
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/urdf/gp7.csv
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/urdf/gp7.urdf
+/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/worlds/gp7_world.sdf
 /home/pankaja/gp7_ws/install/gp7_description/share/ament_index/resource_index/package_run_dependencies/gp7_description
 /home/pankaja/gp7_ws/install/gp7_description/share/ament_index/resource_index/parent_prefix_path/gp7_description
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/environment/ament_prefix_path.sh

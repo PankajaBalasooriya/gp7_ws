@@ -1,77 +1,54 @@
-import os
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.actions import ExecuteProcess, TimerAction
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
 
 
 def generate_launch_description():
-    # Get the package share directory
-    pkg_share = get_package_share_directory('gp7_description')
-    gazebo_ros_share = get_package_share_directory('gazebo_ros')
+    pkg_path = get_package_share_directory('gp7_description')
 
-    # Path to URDF file
-    urdf_file = os.path.join(pkg_share, 'urdf', 'GP7 Robot.SLDASM.urdf')
+    world_path = os.path.join(pkg_path, 'worlds', 'gp7_world.sdf')
+    urdf_path = os.path.join(pkg_path, 'urdf', 'gp7.urdf')
 
-    # Read URDF file
-    with open(urdf_file, 'r') as f:
-        robot_description = f.read()
-
-    # Declare launch arguments
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-
-    # Include Gazebo launch file
-    gazebo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(gazebo_ros_share, 'launch', 'gazebo.launch.py')
-        )
+    # 1. Start Gazebo with your custom world
+    # NOTE: gz_args must be one string: 'gz_args:="-r <world>"'
+    gazebo = ExecuteProcess(
+        cmd=[
+            'ros2', 'launch', 'ros_gz_sim', 'gz_sim.launch.py',
+            f'gz_args:=-r {world_path}'
+        ],
+        output='screen'
     )
 
-    # Static transform publisher (replacing tf static_transform_publisher)
-    static_tf_node = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='tf_footprint_base',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint']
-    )
-
-    # Spawn entity node (replacing spawn_model)
-    spawn_entity_node = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        name='spawn_entity',
-        output='screen',
-        arguments=[
-            '-entity', 'GP7_Robot_SLDASM',
-            '-topic', 'robot_description',
-            '-x', '0.0',
-            '-y', '0.0',
-            '-z', '0.0'
-        ]
-    )
-
-    # Robot State Publisher node
-    robot_state_publisher_node = Node(
+    # 2. Publish robot description to ROS
+    robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        name='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': robot_description,
-            'use_sim_time': use_sim_time
+            'robot_description': open(urdf_path).read()
         }]
     )
 
+    # 3. Spawn robot into Gazebo at (0,0,0) after a short delay
+    spawn_robot = TimerAction(
+        period=5.0,  # seconds; give Gazebo time to start
+        actions=[
+            ExecuteProcess(
+                cmd=[
+                    'ros2', 'run', 'ros_gz_sim', 'create',
+                    '-name', 'gp7',
+                    '-x', '0', '-y', '0', '-z', '0',
+                    '-topic', '/robot_description'
+                ],
+                output='screen'
+            )
+        ]
+    )
+
     return LaunchDescription([
-        DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='true',
-            description='Use simulation (Gazebo) clock if true'
-        ),
-        gazebo_launch,
-        static_tf_node,
-        robot_state_publisher_node,
-        spawn_entity_node
+        gazebo,
+        robot_state_publisher,
+        spawn_robot
     ])

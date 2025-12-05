@@ -13,7 +13,7 @@
 -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
 -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
 -- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
--- Configuring done (0.4s)
+-- Configuring done (0.5s)
 -- Generating done (0.0s)
 -- Build files have been written to: /home/pankaja/gp7_ws/build/gp7_description
 -- Install configuration: ""
@@ -38,6 +38,8 @@
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/urdf
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/urdf/gp7.csv
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/urdf/gp7.urdf
+-- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/worlds
+-- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/worlds/gp7_world.sdf
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/ament_index/resource_index/package_run_dependencies/gp7_description
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/ament_index/resource_index/parent_prefix_path/gp7_description
 -- Installing: /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/environment/ament_prefix_path.sh
