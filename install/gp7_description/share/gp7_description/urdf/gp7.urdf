@@ -4,17 +4,13 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="gp7">
-  <gazebo>
-    <plugin filename="libgz_ros2_control-system.so"
-            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <!-- <parameters>package://gp7_description/config/gp7_controllers.yaml</parameters> -->
-      <parameters>/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_controllers.yaml</parameters> 
-      <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
-    </plugin>
-  </gazebo>
+ 
   <link
     name="base_link">
-        
+    <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
 
     <inertial>
       <origin
@@ -523,52 +519,91 @@
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
 
+     <ros2_control name="GazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    
+    <!-- Main arm joints (1-6) -->
     <joint name="joint_1">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-3.14159</param>
+        <param name="max">3.14159</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_2">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-1.91986</param>
+        <param name="max">2.35619</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_3">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-1.13446</param>
+        <param name="max">4.36332</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_4">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-3.49066</param>
+        <param name="max">3.49066</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_5">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-2.18166</param>
+        <param name="max">2.18166</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_6">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">-6.28319</param>
+        <param name="max">6.28319</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
+    <!-- Gripper joints (7-8) -->
     <joint name="joint_7">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">0.0</param>
+        <param name="max">0.8</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
-
+    
     <joint name="joint_8">
-      <command_interface name="position" />
-      <state_interface name="position" />
-      <state_interface name="velocity" />
+      <command_interface name="position">
+        <param name="min">0.0</param>
+        <param name="max">0.8</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
     </joint>
+    
   </ros2_control>
+
+  <!-- Gazebo plugins -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find gp7_description)/config/gp7_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
 </robot>

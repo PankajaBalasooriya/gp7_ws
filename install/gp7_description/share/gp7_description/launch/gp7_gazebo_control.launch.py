@@ -1,52 +1,126 @@
+#!/usr/bin/env python3
+
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, ExecuteProcess
+from launch.event_handlers import OnProcessExit
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
+from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 import os
 
-
 def generate_launch_description():
-    pkg_path = get_package_share_directory('gp7_description')
-
-    world_path = os.path.join(pkg_path, 'worlds', 'gp7_world.sdf')
-    urdf_path = os.path.join(pkg_path, 'urdf', 'gp7.urdf')
-
-    # 1. Start Gazebo with world
-    gazebo = ExecuteProcess(
-        cmd=[
-            'ros2', 'launch', 'ros_gz_sim', 'gz_sim.launch.py',
-            f'gz_args:={world_path}'
-        ],
-        output='screen'
+    
+    # Get package directories
+    pkg_gp7_description = FindPackageShare('gp7_description')
+    
+    # Get URDF via xacro
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution([pkg_gp7_description, "urdf", "gp7_robot.urdf"]),
+        ]
     )
-
-    # 2. Robot state publisher (publishes /robot_description)
+    
+    robot_description = {"robot_description": robot_description_content}
+    
+    # World file
+    world_file = PathJoinSubstitution([pkg_gp7_description, 'worlds', 'gp7_world.sdf'])
+    
+    # Gazebo launch
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'gz_args': [world_file, ' -r'],  # -r flag starts paused, remove for auto-start
+            'on_exit_shutdown': 'true'
+        }.items()
+    )
+    
+    # Robot State Publisher (with use_sim_time=True)
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': open(urdf_path).read()}]
+        parameters=[
+            robot_description,
+            {'use_sim_time': True}  # CRITICAL FIX
+        ]
     )
-
-    # 3. Spawn robot into Gazebo at origin, using /robot_description
-    spawn_robot = ExecuteProcess(
-        cmd=[
-            'ros2', 'run', 'ros_gz_sim', 'create',
-            '-name', 'gp7',
-            '-x', '0', '-y', '0', '-z', '0',
-            '-topic', '/robot_description'
+    
+    # Spawn robot
+    spawn_robot = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-topic', 'robot_description',
+            '-name', 'gp7_robot',
+            '-z', '0.0'
         ],
-        output='screen'
+        output='screen',
+        parameters=[{'use_sim_time': True}]
     )
-
-    # NOTE:
-    # - We do NOT start ros2_control_node here.
-    # - The ros2_control controller_manager is created INSIDE Gazebo
-    #   by the gz_ros_control / gz_ros2_control plugin using <ros2_control> tag in URDF.
-    # - We will load controllers using `ros2 control` CLI.
-
+    
+    # Joint State Broadcaster
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+    
+    # Arm Controller (JointTrajectoryController)
+    arm_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['arm_controller', '--controller-manager', '/controller_manager'],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+    
+    # Gripper Controller (optional, for joints 7-8)
+    gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_controller', '--controller-manager', '/controller_manager'],
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+    
+    # Delay start of controllers after spawn
+    delay_joint_state_broadcaster = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=spawn_robot,
+            on_exit=[joint_state_broadcaster_spawner],
+        )
+    )
+    
+    delay_arm_controller = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[arm_controller_spawner],
+        )
+    )
+    
+    delay_gripper_controller = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=arm_controller_spawner,
+            on_exit=[gripper_controller_spawner],
+        )
+    )
+    
     return LaunchDescription([
         gazebo,
         robot_state_publisher,
         spawn_robot,
+        delay_joint_state_broadcaster,
+        delay_arm_controller,
+        delay_gripper_controller,
     ])
