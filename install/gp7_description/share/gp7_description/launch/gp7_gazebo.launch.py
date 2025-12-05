@@ -1,99 +1,24 @@
-# from launch import LaunchDescription
-# from launch.actions import ExecuteProcess, TimerAction
-# from launch_ros.actions import Node
-# from ament_index_python.packages import get_package_share_directory
-# import os
-
-
-# def generate_launch_description():
-#     pkg_path = get_package_share_directory('gp7_description')
-
-#     world_path = os.path.join(pkg_path, 'worlds', 'gp7_world.sdf')
-#     urdf_path = os.path.join(pkg_path, 'urdf', 'gp7.urdf')
-
-#     # 1. Start Gazebo with your custom world
-#     gazebo = ExecuteProcess(
-#         cmd=[
-#             'ros2', 'launch', 'ros_gz_sim', 'gz_sim.launch.py',
-#             f'gz_args:=-r {world_path}'
-#         ],
-#         output='screen'
-#     )
-
-#     # 2. Robot State Publisher
-#     robot_state_publisher = Node(
-#         package='robot_state_publisher',
-#         executable='robot_state_publisher',
-#         output='screen',
-#         parameters=[{'robot_description': open(urdf_path).read()}]
-#     )
-
-#     # 3. Spawn robot into Gazebo after a short delay
-#     spawn_robot = TimerAction(
-#         period=5.0,
-#         actions=[
-#             ExecuteProcess(
-#                 cmd=[
-#                     'ros2', 'run', 'ros_gz_sim', 'create',
-#                     '-name', 'gp7',
-#                     '-x', '0', '-y', '0', '-z', '0',
-#                     '-topic', '/robot_description'
-#                 ],
-#                 output='screen'
-#             )
-#         ]
-#     )
-
-#     # 4. Load controllers after Gazebo + plugin are running
-#     load_joint_state_broadcaster = TimerAction(
-#         period=10.0,
-#         actions=[
-#             ExecuteProcess(
-#                 cmd=[
-#                     'ros2', 'control', 'load_controller',
-#                     '--set-state', 'active',
-#                     'joint_state_broadcaster'
-#                 ],
-#                 output='screen'
-#             )
-#         ]
-#     )
-
-#     load_trajectory_controller = TimerAction(
-#         period=11.0,
-#         actions=[
-#             ExecuteProcess(
-#                 cmd=[
-#                     'ros2', 'control', 'load_controller',
-#                     '--set-state', 'active',
-#                     'gp7_trajectory_controller'
-#                 ],
-#                 output='screen'
-#             )
-#         ]
-#     )
-
-#     return LaunchDescription([
-#         gazebo,
-#         robot_state_publisher,
-#         spawn_robot,
-#         load_joint_state_broadcaster,
-#         load_trajectory_controller
-#     ])
-
-
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, TimerAction
+from launch.actions import ExecuteProcess, TimerAction, RegisterEventHandler
+from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
+import xacro
 
 
 def generate_launch_description():
     pkg_path = get_package_share_directory('gp7_description')
 
     world_path = os.path.join(pkg_path, 'worlds', 'gp7_world.sdf')
-    urdf_path = os.path.join(pkg_path, 'urdf', 'gp7.urdf')
+    xacro_path = os.path.join(pkg_path, 'urdf', 'gp7.urdf.xacro')
+    controller_config_path = os.path.join(pkg_path, 'config', 'gp7_controllers.yaml')
+
+    # Process xacro
+    robot_description = xacro.process_file(
+        xacro_path,
+        mappings={'controller_config_path': controller_config_path}
+    ).toxml()
 
     # 1. Start Gazebo with your custom world
     gazebo = ExecuteProcess(
@@ -104,17 +29,28 @@ def generate_launch_description():
         output='screen'
     )
 
-    # 2. Robot State Publisher
+    # 2. Bridge the clock from Gazebo to ROS2
+    clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
+    # 3. Robot State Publisher with use_sim_time
     rsp = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': open(urdf_path).read()}]
+        parameters=[
+            {'robot_description': robot_description},
+            {'use_sim_time': True}
+        ]
     )
 
-    # 3. Spawn robot into Gazebo after a short delay
+    # 4. Spawn robot into Gazebo after a short delay
     spawn_robot = TimerAction(
-        period=5.0,
+        period=15.0,
         actions=[
             ExecuteProcess(
                 cmd=[
@@ -128,8 +64,41 @@ def generate_launch_description():
         ]
     )
 
+    # 5. Load joint_state_broadcaster
+    load_joint_state_broadcaster = TimerAction(
+        period=18.0,  # Slightly increased delay
+        actions=[
+            ExecuteProcess(
+                cmd=[
+                    'ros2', 'control', 'load_controller',
+                    '--set-state', 'active',
+                    'joint_state_broadcaster'
+                ],
+                output='screen'
+            )
+        ]
+    )
+
+    # 6. Load arm_controller
+    load_arm_controller = TimerAction(
+        period=20.0,
+        actions=[
+            ExecuteProcess(
+                cmd=[
+                    'ros2', 'control', 'load_controller',
+                    '--set-state', 'active',
+                    'arm_controller'
+                ],
+                output='screen'
+            )
+        ]
+    )
+
     return LaunchDescription([
         gazebo,
+        clock_bridge,  # Add clock bridge
         rsp,
         spawn_robot,
+        load_joint_state_broadcaster,
+        load_arm_controller
     ])
