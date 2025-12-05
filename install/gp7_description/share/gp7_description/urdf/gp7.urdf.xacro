@@ -4,7 +4,15 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="gp7">
-  
+ <!-- Dummy world link -->
+  <link name="world" />
+
+  <!-- Virtual joint connecting world to base_link -->
+  <joint name="world_to_base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
   <link
     name="base_link">
         
@@ -17,10 +25,10 @@
         value="5.21544079925593" />
       <inertia
         ixx="0.0260256781512797"
-        ixy="-2.5924745904837E-05"
-        ixz="-0.000139844593770951"
+        ixy="0"
+        ixz="0"
         iyy="0.0252950776511285"
-        iyz="4.76784711767462E-05"
+        iyz="0"
         izz="0.0217205299171908" />
     </inertial>
     <visual>
@@ -564,12 +572,16 @@
       <state_interface name="velocity" />
     </joint>
   </ros2_control>
+
+    <!-- Gazebo + ros2_control plugin -->
   <gazebo>
     <plugin filename="libgz_ros2_control-system.so"
             name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <!-- <parameters>package://gp7_description/config/gp7_controllers.yaml</parameters> -->
-      <parameters>/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_controllers.yaml</parameters> 
-      <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
+      <!-- Path to controller YAML -->
+      <parameters>/home/pankaja/gp7_ws/src/gp7_description/config/gp7_controllers.yaml</parameters>
     </plugin>
   </gazebo>
+
+
+
 </robot>

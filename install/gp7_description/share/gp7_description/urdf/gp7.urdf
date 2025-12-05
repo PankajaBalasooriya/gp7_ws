@@ -4,14 +4,7 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="gp7">
-  <gazebo>
-    <plugin filename="libgz_ros2_control-system.so"
-            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <!-- <parameters>package://gp7_description/config/gp7_controllers.yaml</parameters> -->
-      <parameters>/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_controllers.yaml</parameters> 
-      <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
-    </plugin>
-  </gazebo>
+  
   <link
     name="base_link">
         
@@ -571,4 +564,12 @@
       <state_interface name="velocity" />
     </joint>
   </ros2_control>
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <!-- <parameters>package://gp7_description/config/gp7_controllers.yaml</parameters> -->
+      <parameters>/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_controllers.yaml</parameters> 
+      <controller_manager_prefix_node_name>controller_manager</controller_manager_prefix_node_name>
+    </plugin>
+  </gazebo>
 </robot>
