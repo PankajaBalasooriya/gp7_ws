@@ -43,10 +43,10 @@
       </link>
     </model>
 
-    <!-- Box A: 0.3 x 0.4 x 0.2 m at (1, 1, 0) -->
+    <!-- Box A: 0.3 x 0.3 x 0.2 m at (0.4, 0.3, 0) -->
     <!-- z = 0.1 (half of 0.2) so it sits on ground -->
     <model name="box_A">
-      <pose>1 1 0.1 0 0 0</pose>
+      <pose>0.4 0.3 0.1 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>1.0</mass>
@@ -58,14 +58,14 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>0.3 0.4 0.2</size>
+              <size>0.3 0.3 0.2</size>
             </box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.3 0.4 0.2</size>
+              <size>0.3 0.3 0.2</size>
             </box>
           </geometry>
           <material>

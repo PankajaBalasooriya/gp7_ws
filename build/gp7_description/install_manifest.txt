@@ -5,6 +5,7 @@
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/gazebo.launch
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/gp7_display.launch.py
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/display.launch
+/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/gp7_gazebo_control.launch.py
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/meshes/link_8.STL
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/meshes/link_3.STL
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/meshes/link_5.STL
