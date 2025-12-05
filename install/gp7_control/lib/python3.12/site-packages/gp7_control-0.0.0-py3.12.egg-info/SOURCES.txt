@@ -10,6 +10,7 @@ setup.py
 gp7_control/__init__.py
 gp7_control/kinematics.py
 gp7_control/pick_and_place_node.py
+gp7_control/simple_joint_move_node.py
 gp7_control/test_movement_node.py
 gp7_control/trajectory.py
 test/test_copyright.py

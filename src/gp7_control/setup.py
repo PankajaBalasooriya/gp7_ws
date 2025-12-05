@@ -47,6 +47,7 @@ setup(
     'console_scripts': [
         'pick_and_place = gp7_control.pick_and_place_node:main',
         'test_movement = gp7_control.test_movement_node:main',
+        'simple_joint_move = gp7_control.simple_joint_move_node:main',
     ],
 },
 )
