@@ -1,4 +1,5 @@
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_joint_names.yaml
+/home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/gp7_controllers.yaml
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/config/urdf.rviz
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/gp7_gazebo.launch.py
 /home/pankaja/gp7_ws/install/gp7_description/share/gp7_description/launch/gazebo.launch
