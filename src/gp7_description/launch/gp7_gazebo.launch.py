@@ -67,7 +67,7 @@ def generate_launch_description():
 
     # 5. Load joint_state_broadcaster
     load_joint_state_broadcaster = TimerAction(
-        period=18.0,  # Slightly increased delay
+        period=18.0,
         actions=[
             ExecuteProcess(
                 cmd=[
@@ -95,11 +95,27 @@ def generate_launch_description():
         ]
     )
 
+    # 7. Load gripper_controller
+    load_gripper_controller = TimerAction(
+        period=22.0,
+        actions=[
+            ExecuteProcess(
+                cmd=[
+                    'ros2', 'control', 'load_controller',
+                    '--set-state', 'active',
+                    'gripper_controller'
+                ],
+                output='screen'
+            )
+        ]
+    )
+
     return LaunchDescription([
         gazebo,
-        clock_bridge,  # Add clock bridge
+        clock_bridge,
         rsp,
         spawn_robot,
         load_joint_state_broadcaster,
-        load_arm_controller
+        load_arm_controller,
+        load_gripper_controller  # Add gripper controller
     ])
