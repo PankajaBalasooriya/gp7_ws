@@ -17,16 +17,25 @@ import numpy as np
 #     [0.0,     0.0,      1.217,  0.0],   # Link 6 (tool)
 # ]
 
-DH_PARAMS = [
-    #  a,     alpha,    d,      theta_offset
-    [0.04,     np.pi/2,  0.33,    0.0],   # Link 1
-    [0.445,    0.0,      0.0,     np.pi/2],   # Link 2
-    [0.04,     np.pi/2,  0.0,     0.0],   # Link 3
-    [0.0,      np.pi/2,  0.44,    0.0],   # Link 4
-    [0.0,      -np.pi/2,  0.0,     0.0],   # Link 5
-    [0.0,      0.0,      0.08,    0.0],   # Link 6 (tool)
-]
+# DH_PARAMS = [
+#     #  a,     alpha,    d,      theta_offset
+#     [0.04,     np.pi/2,  0.33,    0.0],   # Link 1
+#     [0.445,    0.0,      0.0,     np.pi/2],   # Link 2
+#     [0.04,     np.pi/2,  0.0,     0.0],   # Link 3
+#     [0.0,      np.pi/2,  0.44,    0.0],   # Link 4
+#     [0.0,      -np.pi/2,  0.0,     0.0],   # Link 5
+#     [0.0,      0.0,      0.08,    0.0],   # Link 6 (tool)
+# ]
 
+DH_PARAMS = [
+    # a, alpha, d, theta_offset
+    [0.0, np.pi/2, 0.330, 0.0],
+    [0.440, 0.0, 0.0, -np.pi/2],  # a ≈ 0.442 (length of link 2)
+    [0.040, np.pi/2, 0.0, 0.0],  # Small offset, twist to J4
+    [0.0, -np.pi/2, 0.440, 0.0],  # d ≈ 0.440 (length along J4 axis)
+    [0.0, np.pi/2, 0.0, 0.0],
+    [0.0, 0.0, 0.135, 0.0],  # d = tool length from J6
+]
 
 def dh_transform(a, alpha, d, theta):
     """Single standard DH transform."""
