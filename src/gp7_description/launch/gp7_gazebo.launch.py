@@ -57,6 +57,7 @@ def generate_launch_description():
                     'ros2', 'run', 'ros_gz_sim', 'create',
                     '-name', 'gp7',
                     '-x', '0', '-y', '0', '-z', '0',
+                    '-R', '0', '-P', '0', '-Y', '3.14159',
                     '-topic', '/robot_description'
                 ],
                 output='screen'

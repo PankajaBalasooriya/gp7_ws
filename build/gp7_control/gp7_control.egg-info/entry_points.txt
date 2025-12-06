@@ -1,0 +1,2 @@
+[console_scripts]
+pick_and_place = gp7_control.pick_and_place_node:main

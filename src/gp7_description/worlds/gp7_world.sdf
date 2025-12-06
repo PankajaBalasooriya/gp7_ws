@@ -76,10 +76,10 @@
       </link>
     </model>
 
-    <!-- Box B: 0.05 x 0.05 x 0.05 m at (0.6, 0.4, 0) -->
+    <!-- Box B: 0.05 x 0.05 x 0.05 m at (0.7, -0.4, 0) -->
     <!-- z = 0.025 (half of 0.05) so it sits on ground -->
     <model name="box_B">
-      <pose>0.6 0.4 0.025 0 0 0</pose>
+      <pose>0.7 -0.4 0.025 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.1</mass>

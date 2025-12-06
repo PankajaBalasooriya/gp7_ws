@@ -1,0 +1,37 @@
+[0.599s] Invoking command in '/home/pankaja/gp7_ws/src/gp7_control': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/pankaja/gp7_ws/build/gp7_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/gp7_control build --build-base /home/pankaja/gp7_ws/build/gp7_control/build install --record /home/pankaja/gp7_ws/build/gp7_control/install.log --single-version-externally-managed
+[0.730s] running egg_info
+[0.730s] creating ../../build/gp7_control/gp7_control.egg-info
+[0.740s] writing ../../build/gp7_control/gp7_control.egg-info/PKG-INFO
+[0.740s] writing dependency_links to ../../build/gp7_control/gp7_control.egg-info/dependency_links.txt
+[0.740s] writing entry points to ../../build/gp7_control/gp7_control.egg-info/entry_points.txt
+[0.740s] writing requirements to ../../build/gp7_control/gp7_control.egg-info/requires.txt
+[0.740s] writing top-level names to ../../build/gp7_control/gp7_control.egg-info/top_level.txt
+[0.740s] writing manifest file '../../build/gp7_control/gp7_control.egg-info/SOURCES.txt'
+[0.760s] reading manifest file '../../build/gp7_control/gp7_control.egg-info/SOURCES.txt'
+[0.761s] writing manifest file '../../build/gp7_control/gp7_control.egg-info/SOURCES.txt'
+[0.761s] running build
+[0.761s] running build_py
+[0.761s] creating /home/pankaja/gp7_ws/build/gp7_control/build
+[0.761s] creating /home/pankaja/gp7_ws/build/gp7_control/build/lib
+[0.761s] creating /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control
+[0.761s] copying gp7_control/trajectory.py -> /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control
+[0.761s] copying gp7_control/pick_and_place_node.py -> /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control
+[0.761s] copying gp7_control/kinematics.py -> /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control
+[0.761s] copying gp7_control/__init__.py -> /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control
+[0.761s] running install
+[0.765s] running install_lib
+[0.775s] creating /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control
+[0.775s] copying /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control/trajectory.py -> /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control
+[0.775s] copying /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control/pick_and_place_node.py -> /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control
+[0.775s] copying /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control/kinematics.py -> /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control
+[0.775s] copying /home/pankaja/gp7_ws/build/gp7_control/build/lib/gp7_control/__init__.py -> /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control
+[0.776s] byte-compiling /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control/trajectory.py to trajectory.cpython-312.pyc
+[0.776s] byte-compiling /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control/pick_and_place_node.py to pick_and_place_node.cpython-312.pyc
+[0.777s] byte-compiling /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control/kinematics.py to kinematics.cpython-312.pyc
+[0.777s] byte-compiling /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control/__init__.py to __init__.cpython-312.pyc
+[0.777s] running install_egg_info
+[0.788s] Copying ../../build/gp7_control/gp7_control.egg-info to /home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages/gp7_control-0.0.0-py3.12.egg-info
+[0.789s] running install_scripts
+[0.858s] Installing pick_and_place script to /home/pankaja/gp7_ws/install/gp7_control/lib/gp7_control
+[0.858s] writing list of installed files to '/home/pankaja/gp7_ws/build/gp7_control/install.log'
+[0.872s] Invoked command in '/home/pankaja/gp7_ws/src/gp7_control' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/pankaja/gp7_ws/build/gp7_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pankaja/gp7_ws/install/gp7_control/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/gp7_control build --build-base /home/pankaja/gp7_ws/build/gp7_control/build install --record /home/pankaja/gp7_ws/build/gp7_control/install.log --single-version-externally-managed
