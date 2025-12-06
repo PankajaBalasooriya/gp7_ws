@@ -7,7 +7,10 @@ from control_msgs.action import GripperCommand
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from sensor_msgs.msg import JointState
 
-from gp7_control.kinematics import inverse_kinematics_position_only
+from geometry_msgs.msg import PointStamped
+
+
+from gp7_control.kinematics import inverse_kinematics_position_only, forward_kinematics
 from gp7_control.trajectory import trapezoidal_multi
 
 
@@ -51,6 +54,13 @@ class PickAndPlaceNode(Node):
             10
         )
 
+        # Publisher for end-effector position (for visualization / debugging)
+        self.ee_pos_pub = self.create_publisher(
+            PointStamped,
+            '/ee_position',
+            10
+        )
+
         self.current_joint_positions = None
         self.dt = 0.02      # 50 Hz trajectory
         self.vmax = 0.8     # rad/s for arm
@@ -77,6 +87,50 @@ class PickAndPlaceNode(Node):
         self.timer = self.create_timer(5.0, self.run_full_pick_and_place)
         self.done = False
 
+
+    def publish_ee_position(self, q, note: str = ""):
+        """
+        Compute forward kinematics for joint positions q and 
+        publish/log the end-effector position.
+        """
+        try:
+            p = forward_kinematics(q)  # whatever your FK returns
+        except Exception as e:
+            self.get_logger().error(f"FK failed: {e}")
+            return
+
+        # Make sure p is a simple 1D array of floats: [x, y, z]
+        p = np.array(p, dtype=float).reshape(-1)
+
+        if p.size < 3:
+            self.get_logger().error(f"FK returned unexpected shape: {p.shape}, value: {p}")
+            return
+
+        x, y, z = float(p[0]), float(p[1]), float(p[2])
+
+        # Log to console
+        if note:
+            self.get_logger().info(
+                f"{note} EE position: x={x:.3f}, y={y:.3f}, z={z:.3f}"
+            )
+        else:
+            self.get_logger().info(
+                f"EE position: x={x:.3f}, y={y:.3f}, z={z:.3f}"
+            )
+
+        # Publish as PointStamped
+        msg = PointStamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = 'base_link'  # or your base frame
+
+        msg.point.x = x
+        msg.point.y = y
+        msg.point.z = z
+
+        self.ee_pos_pub.publish(msg)
+
+
+
     def joint_state_callback(self, msg):
         """Store current joint positions"""
         try:
@@ -86,6 +140,9 @@ class PickAndPlaceNode(Node):
                 idx = msg.name.index(name)
                 positions.append(msg.position[idx])
             self.current_joint_positions = np.array(positions)
+            # self.publish_ee_position(self.current_joint_positions,
+            #                          note="[JOINT STATE]")
+
         except (ValueError, IndexError) as e:
             self.get_logger().warn(f"Could not find joint in state: {e}")
 
@@ -181,6 +238,9 @@ class PickAndPlaceNode(Node):
             q_current = q_sol
 
         return joint_waypoints
+    
+    
+
 
     def run_full_pick_and_place(self):
         """Execute the full pick and place sequence with gripper control"""
@@ -198,7 +258,7 @@ class PickAndPlaceNode(Node):
         self.get_logger().info("=" * 50)
 
         # Define heights
-        z_clear = 0.3  # Safe height above boxes
+        z_clear = 0.05  # Safe height above boxes
         z_grasp_B = self.box_height_B + 0.02  # Slightly above small box
         z_place_A = self.box_height_A + self.box_height_B / 2.0 + 0.02  # Place on top of large box
 
@@ -211,19 +271,19 @@ class PickAndPlaceNode(Node):
         waypoints = self.compute_cartesian_to_joint_waypoints([pos_above_B])
         if waypoints is None:
             return
-        
+        print(waypoints)
         duration = self.send_arm_trajectory(waypoints)
         
         # ============================================
         # PHASE 2: Open gripper before descending
         # ============================================
-        def phase2():
-            self.get_logger().info("\n[PHASE 2] Opening gripper")
-            self.send_gripper_command(self.gripper_open_position, 1.0)
-            # Schedule phase 3
-            self.create_oneshot_timer(2.0, lambda: self.get_logger().info("\n✓ Pick-and-place sequence COMPLETE!"))
+        # def phase2():
+        #     self.get_logger().info("\n[PHASE 2] Opening gripper")
+        #     self.send_gripper_command(self.gripper_open_position, 1.0)
+        #     # Schedule phase 3
+        #     self.create_oneshot_timer(2.0, lambda: self.get_logger().info("\n✓ Pick-and-place sequence COMPLETE!"))
         
-        self.create_oneshot_timer(duration + 0.5, phase2)
+        # self.create_oneshot_timer(duration + 0.5, phase2)
         
         # # ============================================
         # # PHASE 3: Descend to grasp position

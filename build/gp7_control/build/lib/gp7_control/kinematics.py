@@ -32,8 +32,8 @@ DH_PARAMS = [
     [0.0, np.pi/2, 0.330, 0.0],
     [0.440, 0.0, 0.0, -np.pi/2],  # a ≈ 0.442 (length of link 2)
     [0.040, np.pi/2, 0.0, 0.0],  # Small offset, twist to J4
-    [0.0, -np.pi/2, 0.440, 0.0],  # d ≈ 0.440 (length along J4 axis)
-    [0.0, np.pi/2, 0.0, 0.0],
+    [0.0, np.pi/2, 0.440, 0.0],  # d ≈ 0.440 (length along J4 axis)
+    [0.0, -np.pi/2, 0.0, 0.0],
     [0.0, 0.0, 0.135, 0.0],  # d = tool length from J6
 ]
 
